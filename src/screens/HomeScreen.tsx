@@ -1,7 +1,7 @@
-import React, { useState } from "react"
-import { Image, ScrollView, StatusBar, Text, View } from "react-native"
+import { useEffect, useRef, useState } from "react"
+import { Image, Pressable, ScrollView, StatusBar, Text, View } from "react-native"
 import tw from "twrnc"
-import Input from "../components/Input"
+import Input from "../components/ui/Input"
 import {
   Center,
   CheckIcon,
@@ -10,11 +10,15 @@ import {
   CheckboxIndicator,
 } from "@gluestack-ui/themed"
 import { Feather } from "@expo/vector-icons"
-import ModalDelete from "../components/DeleteModal"
+import ModalDelete from "../components/ui/DeleteModal"
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import { useDispatch, useSelector } from "react-redux"
+import { RootState } from "../libs/Store"
+import { getListsData } from "../features/todos/todosSlice"
 
 const HomeScreen = () => {
   const [showModal, setShowModal] = useState(false)
-  const ref = React.useRef(null)
+  const ref = useRef(null)
 
   return (
     <ScrollView>
@@ -58,19 +62,15 @@ const HomeScreen = () => {
             </Checkbox>
 
             <Center>
-              <View
+              <Pressable
+                onPress={() => setShowModal(true)}
+                ref={ref}
                 style={tw` w-6 h-6 flex items-center justify-center p-2 bg-red-500 rounded-full`}
               >
-                <Feather
-                  onPress={() => setShowModal(true)}
-                  ref={ref}
-                  name="x-circle"
-                  size={22}
-                  color="white"
-                />
-              </View>
+                <Feather name="x-circle" size={22} color="white" />
+              </Pressable>
 
-              <ModalDelete showModal={showModal} setShowModal={setShowModal} ref={ref} />
+              {/* <ModalDelete showModal={showModal} setShowModal={setShowModal} ref={ref} /> */}
             </Center>
           </View>
         </View>
