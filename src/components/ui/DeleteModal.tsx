@@ -9,7 +9,7 @@ import {
 import { Text } from "react-native"
 import tw from "twrnc"
 
-const DeleteModal = ({ showModal, setShowModal, ref }: any) => {
+const DeleteModal = ({ showModal, setShowModal, ref, onPress }: any) => {
   return (
     <Modal
       isOpen={showModal}
@@ -41,7 +41,7 @@ const DeleteModal = ({ showModal, setShowModal, ref }: any) => {
               setShowModal(false)
             }}
           >
-            <ButtonText>Delete</ButtonText>
+            <ButtonText onPress={onPress}>Delete</ButtonText>
           </Button>
         </ModalFooter>
       </ModalContent>

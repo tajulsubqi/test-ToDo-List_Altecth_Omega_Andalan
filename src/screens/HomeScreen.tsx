@@ -12,13 +12,28 @@ import {
 import { Feather } from "@expo/vector-icons"
 import ModalDelete from "../components/ui/DeleteModal"
 import AsyncStorage from "@react-native-async-storage/async-storage"
-import { useDispatch, useSelector } from "react-redux"
-import { RootState } from "../libs/Store"
-import { getListsData } from "../features/todos/todosSlice"
+import useFetchList from "../hooks/useFetchList"
+import { useDispatch } from "react-redux"
+import { removeList } from "../features/todos/todosSlice"
 
 const HomeScreen = () => {
   const [showModal, setShowModal] = useState(false)
   const ref = useRef(null)
+  const { existingLists, setExistingLists } = useFetchList()
+
+  // const dispatch = useDispatch()
+
+  const handleDeleteList = async (title: string) => {
+    const updatedLists = existingLists.filter((item) => item.title !== title)
+    await AsyncStorage.setItem("lists", JSON.stringify(updatedLists))
+    setExistingLists(updatedLists)
+    setShowModal(false)
+  }
+
+  // const handleDeleteList = async (title: string) => {
+  //   dispatch(removeList({ title }))
+  //   setShowModal(false)
+  // }
 
   return (
     <ScrollView>
@@ -42,39 +57,46 @@ const HomeScreen = () => {
       </View>
 
       {/* list */}
-      <View style={tw`mt-3 bg-sky-200 px-4 mx-4 py-3 rounded-lg`}>
-        <View style={tw`flex flex-row items-center justify-between`}>
-          <Text style={tw`font-bold text-[16px]`}>Study - golang</Text>
-          <Text style={tw`font-bold text-white bg-sky-500 px-3 py-1 rounded`}>Study</Text>
-        </View>
-        <View style={tw`flex flex-row mt-1 items-center justify-between`}>
-          <Text style={tw`w-3/4 text-gray-500 text-[12px] text-justify`}>
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Excepturi itaque
-            nisi obcaecati exercitationem minima dignissimos facilis quidem nostrum
-            tenetur id.
-          </Text>
+      {existingLists.map((item: any, index: number) => (
+        <View key={index} style={tw`mt-3 bg-sky-200 px-4 mx-4 py-3 rounded-lg`}>
+          <View style={tw`flex flex-row items-center justify-between`}>
+            <Text style={tw`font-bold text-[16px]`}>{item.title}</Text>
+            <Text style={tw`font-bold text-white bg-sky-500 px-3 py-1 rounded`}>
+              {item.category}
+            </Text>
+          </View>
+          <View style={tw`flex flex-row mt-1 items-center justify-between`}>
+            <Text style={tw`w-3/4 text-gray-500 text-[12px] text-justify`}>
+              {item.description}
+            </Text>
 
-          <View style={tw`flex flex-row items-center`}>
-            <Checkbox onChange={() => console.log("changed")} value="">
-              <CheckboxIndicator mr="$2" bgColor="white" $active-bgColor="green">
-                <CheckboxIcon color="green" as={CheckIcon} />
-              </CheckboxIndicator>
-            </Checkbox>
+            <View style={tw`flex flex-row items-center`}>
+              <Checkbox onChange={() => console.log("changed")} value="">
+                <CheckboxIndicator mr="$2" bgColor="white" $active-bgColor="green">
+                  <CheckboxIcon color="green" as={CheckIcon} />
+                </CheckboxIndicator>
+              </Checkbox>
 
-            <Center>
-              <Pressable
-                onPress={() => setShowModal(true)}
-                ref={ref}
-                style={tw` w-6 h-6 flex items-center justify-center p-2 bg-red-500 rounded-full`}
-              >
-                <Feather name="x-circle" size={22} color="white" />
-              </Pressable>
+              <Center>
+                <Pressable
+                  onPress={() => setShowModal(true)}
+                  ref={ref}
+                  style={tw` w-6 h-6 flex items-center justify-center p-2 bg-red-500 rounded-full`}
+                >
+                  <Feather name="x-circle" size={22} color="white" />
+                </Pressable>
 
-              {/* <ModalDelete showModal={showModal} setShowModal={setShowModal} ref={ref} /> */}
-            </Center>
+                <ModalDelete
+                  onPress={() => handleDeleteList(item.title)}
+                  showModal={showModal}
+                  setShowModal={setShowModal}
+                  ref={ref}
+                />
+              </Center>
+            </View>
           </View>
         </View>
-      </View>
+      ))}
       {/* list */}
     </ScrollView>
   )

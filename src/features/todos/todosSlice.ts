@@ -33,8 +33,14 @@ export const todoSlice = createSlice({
       state.todos.push(action.payload)
       // AsyncStorage.setItem("lists", JSON.stringify(state.todos))
     },
+
+    removeList: (state, action) => {
+      state.todos = state.todos.filter((item) => item.title !== action.payload.title)
+      AsyncStorage.setItem("lists", JSON.stringify(state.todos))
+    },
   },
 })
 
-export const { getCategoriesData, addCategory, getListsData, addList } = todoSlice.actions
+export const { getCategoriesData, addCategory, getListsData, addList, removeList } =
+  todoSlice.actions
 export default todoSlice.reducer
