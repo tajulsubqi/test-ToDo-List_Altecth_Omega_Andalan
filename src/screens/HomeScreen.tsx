@@ -1,13 +1,5 @@
 import { useRef, useState, useEffect } from "react"
-import {
-  FlatList,
-  Image,
-  Pressable,
-  ScrollView,
-  StatusBar,
-  Text,
-  View,
-} from "react-native"
+import { FlatList, Image, Pressable, ScrollView, Text, View } from "react-native"
 import tw from "twrnc"
 import Input from "../components/ui/Input"
 import { Center } from "@gluestack-ui/themed"
@@ -17,6 +9,7 @@ import CheckBox from "../components/ui/CheckBox"
 import { deleteList, getLists } from "../features/todos/todosSlice"
 import { useAppDispatch, useAppSelector } from "../libs/Store"
 import useCheckList from "../hooks/useCheckList"
+import { StatusBar } from "react-native"
 
 const HomeScreen = () => {
   const lists = useAppSelector((state) => state.app.todos)
@@ -37,13 +30,13 @@ const HomeScreen = () => {
   }
 
   return (
-    <ScrollView>
-      <StatusBar backgroundColor={"#0369a1"} />
-      <View style={tw`w-full bg-sky-700 shadow-md rounded-b-[40px] mb-5 px-4 py-4`}>
+    <ScrollView style={tw`bg-[#EEEEEE]`}>
+      <StatusBar backgroundColor={"#4F709C"} />
+      <View style={tw`w-full bg-[#4F709C] shadow-md rounded-b-[40px] mb-5 px-4 py-4`}>
         <View style={tw`flex flex-row items-center justify-between`}>
           <View>
             <Text style={tw`text-2xl text-white font-bold`}>Hi, Tajul</Text>
-            <Text style={tw`text-sm text-sky-100`}>5 list</Text>
+            <Text style={tw`text-sm text-sky-100`}>{lists.length} list</Text>
           </View>
 
           <View style={tw`w-12 h-12 p-[6px] bg-sky-400 rounded-full`}>
@@ -61,25 +54,25 @@ const HomeScreen = () => {
       <FlatList
         data={lists}
         renderItem={({ item, index }) => (
-          <View key={index} style={tw`mt-3 bg-sky-200 px-4 mx-4 py-3 rounded-lg`}>
+          <View key={index} style={tw`mt-3 bg-[#B5C0D0] px-4 mx-4 py-3 rounded-lg`}>
             {/* Render each list item here */}
             <View style={tw`flex flex-row items-center justify-between`}>
               <Text
                 style={[
-                  tw`font-bold text-[16px]`,
+                  tw`font-bold text-[#4A55A2] text-[16px]`,
                   !!selectedItems[item.title] && { textDecorationLine: "line-through" },
                 ]}
               >
                 {item.title}
               </Text>
-              <Text style={tw`font-bold text-white bg-sky-500 px-3 py-1 rounded`}>
+              <Text style={tw`font-bold text-white bg-[#4F709C] px-3 py-1 rounded-lg`}>
                 {item.category}
               </Text>
             </View>
             <View style={tw`flex flex-row mt-1 items-center justify-between`}>
               <Text
                 style={[
-                  tw`w-3/4 text-gray-500 text-[12px] text-justify`,
+                  tw`w-3/4 text-gray-700 text-[13px] text-justify`,
                   !!selectedItems[item.title] && { textDecorationLine: "line-through" },
                 ]}
               >

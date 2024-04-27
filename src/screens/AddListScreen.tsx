@@ -7,7 +7,7 @@ import Button from "../components/ui/Button"
 import { Ionicons } from "@expo/vector-icons"
 import SelectCategory from "../components/ui/SelectCategory"
 import { createList } from "../features/todos/todosSlice"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useNavigation } from "@react-navigation/native"
 import { useAppDispatch } from "../libs/Store"
 import { Todo } from "../interface"
@@ -22,6 +22,11 @@ const AddListScreen = () => {
   const dispatch = useAppDispatch()
 
   const handleAddList = () => {
+    if (!title.trim() || !description.trim() || !category.trim()) {
+      setError("Please fill in all fields")
+      return
+    }
+
     try {
       dispatch(createList({ title, description, category } as Todo))
       setTitle("")
@@ -37,8 +42,8 @@ const AddListScreen = () => {
   return (
     <Container>
       <View style={tw`relative`}>
-        <Text style={tw`text-2xl text-center font-bold`}>Add List</Text>
-        <Pressable style={tw`absolute`}>
+        <Text style={tw`text-2xl text-center font-bold text-[#4F709C]`}>Add List</Text>
+        <Pressable onPress={() => navigation.goBack()} style={tw`absolute`}>
           <Ionicons name="chevron-back-sharp" size={24} color="black" />
         </Pressable>
       </View>
@@ -50,7 +55,7 @@ const AddListScreen = () => {
           isFocused={navigation.isFocused()}
         />
         <TextArea value={description} onChange={(text) => setDescription(text)} />
-        <Button label="Add List" onPress={handleAddList} />
+        <Button label="Add List" bgColor="#535C91" onPress={handleAddList} />
       </View>
     </Container>
   )

@@ -1,14 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit"
 import todoReducer from "../features/todos/todosSlice"
 import { useDispatch, useSelector } from "react-redux"
-import categoriesReducer from "../features/todos/categoriesSlice"
-import listsReducer from "../features/todos/listsSlice"
 
 export const store = configureStore({
   reducer: {
     app: todoReducer,
-    // categories: categoriesReducer,
-    // lists: listsReducer,
   },
 })
 

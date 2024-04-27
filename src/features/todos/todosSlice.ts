@@ -32,6 +32,28 @@ export const createCategory = createAsyncThunk(
   },
 )
 
+export const deletedCategory = createAsyncThunk(
+  "categories/deletedCategory",
+  async (deletedCategory: string) => {
+    // Ambil kategori yang tersimpan dari AsyncStorage
+    const storedCategories = await AsyncStorage.getItem("categories")
+    let categories: string[] = []
+
+    // Jika ada kategori yang tersimpan, parse menjadi array
+    if (storedCategories !== null) {
+      categories = JSON.parse(storedCategories)
+    }
+
+    // Buat array baru tanpa kategori yang dihapus
+    const newCategories = categories.filter(
+      (category: string) => category !== deletedCategory,
+    )
+
+    await AsyncStorage.setItem("categories", JSON.stringify(newCategories))
+    return newCategories
+  },
+)
+
 export const createList = createAsyncThunk<
   Todo[],
   { title: string; description: string; category: string },
@@ -96,6 +118,11 @@ export const todoSlice = createSlice({
 
       // Add category
       .addCase(createCategory.fulfilled, (state, action) => {
+        state.categories = action.payload
+      })
+
+      // Delete category
+      .addCase(deletedCategory.fulfilled, (state, action) => {
         state.categories = action.payload
       })
 

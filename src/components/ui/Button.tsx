@@ -10,7 +10,7 @@ interface Props {
 
 const CustomButton = ({ label, bgColor, onPress }: Props) => {
   return (
-    <View style={tw`w-full p-1 bg-sky-400 rounded-lg shadow-sm`}>
+    <View style={tw`w-full p-1 bg-[#535C91] rounded-lg shadow-sm`}>
       <Button onPress={onPress} title={label} color={bgColor} />
     </View>
   )

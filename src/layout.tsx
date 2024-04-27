@@ -5,8 +5,8 @@ import { config } from "@gluestack-ui/config"
 
 const Container = ({ children }: { children: React.ReactNode }) => {
   return (
-    <ScrollView>
-      <StatusBar backgroundColor={"#fff"} />
+    <ScrollView style={tw`bg-[#EEEEEE]`}>
+      <StatusBar backgroundColor={"#EEEEEE"} />
       <View style={tw`w-full px-4 py-4`}>
         <GluestackUIProvider config={config}>{children}</GluestackUIProvider>
       </View>
