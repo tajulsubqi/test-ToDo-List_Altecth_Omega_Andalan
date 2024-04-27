@@ -11,7 +11,7 @@ const Navigation = () => {
   return (
     <NavigationContainer>
       <Tab.Navigator
-        initialRouteName="Addlist"
+        initialRouteName="Home"
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
             let iconName

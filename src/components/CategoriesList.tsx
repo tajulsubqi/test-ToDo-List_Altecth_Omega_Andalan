@@ -3,7 +3,11 @@ import { Text } from "react-native"
 import { View } from "react-native"
 import tw from "twrnc"
 
-const CategoriesList = ({ categoriesData }: { categoriesData: string[] }) => {
+interface Props {
+  categoriesData: string[]
+}
+
+const CategoriesList = ({ categoriesData }: Props) => {
   return (
     <View style={tw`mt-3 flex flex-row gap-2 flex-wrap py-3 rounded-lg`}>
       {categoriesData.map((data, index) => (

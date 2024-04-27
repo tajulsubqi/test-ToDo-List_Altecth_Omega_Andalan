@@ -5,21 +5,14 @@ import tw from "twrnc"
 import Input from "../components/ui/Input"
 import Button from "../components/ui/Button"
 import { Ionicons } from "@expo/vector-icons"
-import { useDispatch, useSelector } from "react-redux"
 import { createCategory, fetchCategories } from "../features/todos/todosSlice"
-import { RootState } from "../libs/Store"
+import { useAppDispatch, useAppSelector } from "../libs/Store"
 import CategoriesList from "../components/CategoriesList"
 
-const AddCategoryScreen = ({ navigation }: { navigation: any }) => {
-  const dispatch = useDispatch()
-  const categoriesData = useSelector((state: RootState) => state.app.todos)
-  const [categoryName, setCategoryName] = useState("")
-
-  console.log("add category", categoriesData)
-
-  useEffect(() => {
-    dispatch(fetchCategories())
-  }, [dispatch])
+const AddCategoryScreen = () => {
+  const dispatch = useAppDispatch()
+  const categoriesData = useAppSelector((state) => state.app.categories)
+  const [categoryName, setCategoryName] = useState<string | undefined>("")
 
   const handleAddCategory = () => {
     if (categoryName.trim() === "") {
@@ -27,13 +20,13 @@ const AddCategoryScreen = ({ navigation }: { navigation: any }) => {
       return
     }
 
-    try {
-      dispatch(createCategory(categoryName))
-      setCategoryName("")
-    } catch (error) {
-      console.error("Failed to create category:", error)
-    }
+    dispatch(createCategory(categoryName))
+    setCategoryName("")
   }
+
+  useEffect(() => {
+    dispatch(fetchCategories())
+  }, [dispatch])
 
   return (
     <Container>

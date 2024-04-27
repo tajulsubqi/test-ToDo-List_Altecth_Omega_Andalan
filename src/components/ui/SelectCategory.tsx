@@ -14,23 +14,24 @@ import {
   SelectItem,
 } from "@gluestack-ui/themed"
 import { ChevronDownIcon } from "@gluestack-ui/themed"
-import { useDispatch, useSelector } from "react-redux"
-import { RootState } from "../../libs/Store"
+import { useSelector } from "react-redux"
+import { RootState, useAppDispatch } from "../../libs/Store"
 import { fetchCategories } from "../../features/todos/todosSlice"
 
 interface Props {
   value?: string | undefined
   onChange?: (value: string) => void
+  isFocused?: boolean
 }
 
-const SelectCategory = ({ value, onChange }: Props) => {
-  const dispatch = useDispatch()
-  const categoriesData = useSelector((state: RootState) => state.app.todos)
+const SelectCategory = ({ value, onChange, isFocused }: Props) => {
+  const dispatch = useAppDispatch()
+  const categoriesData = useSelector((state: RootState) => state.app.categories)
   console.log("select add list", categoriesData)
 
   useEffect(() => {
     dispatch(fetchCategories())
-  }, [dispatch])
+  }, [isFocused])
 
   return (
     <View>

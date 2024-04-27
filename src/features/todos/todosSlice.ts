@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { createSlice } from "@reduxjs/toolkit"
 import { createAsyncThunk } from "@reduxjs/toolkit"
+import { Todo, TodosState } from "../../interface"
 
 export const fetchCategories = createAsyncThunk(
   "categories/fetchCategories",
@@ -9,7 +10,7 @@ export const fetchCategories = createAsyncThunk(
     if (storedCategories !== null) {
       return JSON.parse(storedCategories)
     } else {
-      return [] // Kembalikan array kosong jika tidak ada data
+      return []
     }
   },
 )
@@ -23,72 +24,59 @@ export const createCategory = createAsyncThunk(
     if (storedCategories !== null) {
       categories = JSON.parse(storedCategories)
     }
-
-    // Tambahkan kategori baru ke array kategori
     categories.push(newCategory)
 
     // Simpan kembali array kategori yang sudah diperbarui ke AsyncStorage
     await AsyncStorage.setItem("categories", JSON.stringify(categories))
-
-    return categories // Kembalikan array kategori yang sudah diperbarui
+    return categories
   },
 )
 
-// export const createList = createAsyncThunk("lists/createList", async (newList) => {
-//   const storedLists = await AsyncStorage.getItem("lists")
-//   let lists = []
-//   if (storedLists !== null) {
-//     lists = JSON.parse(storedLists)
-//   }
+export const createList = createAsyncThunk<
+  Todo[],
+  { title: string; description: string; category: string },
+  { rejectValue: string }
+>("lists/createList", async ({ title, description, category }, thunkAPI) => {
+  // Get existing data from AsyncStorage
+  const existingData = await AsyncStorage.getItem("lists")
+  let lists: any[] = []
 
-//   lists.push(newList)
+  // If data exists, parse it into an array
+  if (existingData !== null) {
+    lists = JSON.parse(existingData)
+  }
 
-//   await AsyncStorage.setItem("lists", JSON.stringify(lists))
-//   return lists
-// })
+  // Add new data to the array
+  lists.push({ title, description, category })
 
-export const createList = createAsyncThunk(
-  "lists/createList",
-  async ({
-    title,
-    description,
-    category,
-  }: {
-    title: string
-    description: string
-    category: any
-  }) => {
-    try {
-      // Get existing data from AsyncStorage
-      const existingData = await AsyncStorage.getItem("lists")
-      let lists: any[] = []
+  // Save the updated data back to AsyncStorage
+  await AsyncStorage.setItem("lists", JSON.stringify(lists))
+  return lists
+})
 
-      // If data exists, parse it into an array
-      if (existingData !== null) {
-        lists = JSON.parse(existingData)
-      }
+export const getLists = createAsyncThunk("lists/getLists", async () => {
+  const storedLists = await AsyncStorage.getItem("lists")
+  console.log("storedLists", storedLists)
 
-      // Add new data to the array
-      lists.push({ title, description, category })
+  if (storedLists !== null) {
+    return JSON.parse(storedLists)
+  } else {
+    return []
+  }
+})
 
-      // Save the updated data back to AsyncStorage
-      await AsyncStorage.setItem("lists", JSON.stringify(lists))
-
-      return lists
-    } catch (error) {
-      // Throw error if failed to add list
-      throw new Error("Failed to add list: " + error)
-    }
-  },
-)
-
-interface TodosState {
-  todos: string[]
-  loading: boolean
-}
+export const deleteList = createAsyncThunk("lists/deleteList", async (title: string) => {
+  const lists = await AsyncStorage.getItem("lists")
+  if (lists) {
+    const updatedLists = JSON.parse(lists).filter((item: any) => item.title !== title)
+    await AsyncStorage.setItem("lists", JSON.stringify(updatedLists))
+    return updatedLists
+  }
+})
 
 const initialState: TodosState = {
   todos: [],
+  categories: [],
   loading: false,
 }
 
@@ -97,52 +85,37 @@ export const todoSlice = createSlice({
   initialState,
   extraReducers: (builder) => {
     builder
+      // Fetch categories
       .addCase(fetchCategories.pending, (state) => {
         state.loading = true
       })
       .addCase(fetchCategories.fulfilled, (state, action) => {
-        state.todos = action.payload
+        state.categories = action.payload
         state.loading = false
       })
 
       // Add category
       .addCase(createCategory.fulfilled, (state, action) => {
-        state.todos = action.payload
+        state.categories = action.payload
       })
 
       // Add list
       .addCase(createList.fulfilled, (state, action) => {
         state.todos = action.payload
       })
+
+      // Get lists
+      .addCase(getLists.fulfilled, (state, action) => {
+        state.todos = action.payload
+      })
+
+      // Remove list
+      .addCase(deleteList.fulfilled, (state, action) => {
+        state.todos = action.payload
+      })
   },
 
-  reducers: {
-    getCategories: (state, action) => {
-      state.todos = action.payload
-    },
-
-    addCategory: (state, action) => {
-      state.todos.push(action.payload)
-      // Simpan ke local storage setelah menambah kategori
-      AsyncStorage.setItem("categories", JSON.stringify(state.todos))
-    },
-
-    getListsData: (state, action) => {
-      state.todos = action.payload
-    },
-
-    addList: (state, action) => {
-      state.todos.push(action.payload)
-      AsyncStorage.setItem("lists", JSON.stringify(state.todos))
-    },
-
-    removeList: (state, action) => {
-      state.todos = state.todos.filter((item) => item.title !== action.payload.title)
-      AsyncStorage.setItem("lists", JSON.stringify(state.todos))
-    },
-  },
+  reducers: {},
 })
 
-export const { getCategories, addCategory, getListsData, addList, removeList } =
-  todoSlice.actions
 export default todoSlice.reducer

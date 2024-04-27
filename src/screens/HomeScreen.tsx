@@ -1,37 +1,40 @@
-import { useRef, useState } from "react"
-import { Image, Pressable, ScrollView, StatusBar, Text, View } from "react-native"
+import { useRef, useState, useEffect } from "react"
+import {
+  FlatList,
+  Image,
+  Pressable,
+  ScrollView,
+  StatusBar,
+  Text,
+  View,
+} from "react-native"
 import tw from "twrnc"
 import Input from "../components/ui/Input"
-import {
-  Center,
-  CheckIcon,
-  Checkbox,
-  CheckboxIcon,
-  CheckboxIndicator,
-} from "@gluestack-ui/themed"
+import { Center } from "@gluestack-ui/themed"
 import { Feather } from "@expo/vector-icons"
 import ModalDelete from "../components/ui/DeleteModal"
-import AsyncStorage from "@react-native-async-storage/async-storage"
-import useFetchList from "../hooks/useFetchList"
+import CheckBox from "../components/ui/CheckBox"
+import { deleteList, getLists } from "../features/todos/todosSlice"
+import { useAppDispatch, useAppSelector } from "../libs/Store"
+import useCheckList from "../hooks/useCheckList"
 
 const HomeScreen = () => {
+  const lists = useAppSelector((state) => state.app.todos)
+  const { selectedItems, handleCheckboxChange } = useCheckList()
+  const dispatch = useAppDispatch()
   const [showModal, setShowModal] = useState(false)
   const ref = useRef(null)
-  const { existingLists, setExistingLists } = useFetchList()
 
-  // const dispatch = useDispatch()
+  useEffect(() => {
+    dispatch(getLists())
+  }, [])
+
+  console.log({ lists })
 
   const handleDeleteList = async (title: string) => {
-    const updatedLists = existingLists.filter((item) => item.title !== title)
-    await AsyncStorage.setItem("lists", JSON.stringify(updatedLists))
-    setExistingLists(updatedLists)
+    await dispatch(deleteList(title))
     setShowModal(false)
   }
-
-  // const handleDeleteList = async (title: string) => {
-  //   dispatch(removeList({ title }))
-  //   setShowModal(false)
-  // }
 
   return (
     <ScrollView>
@@ -55,46 +58,66 @@ const HomeScreen = () => {
       </View>
 
       {/* list */}
-      {existingLists.map((item: any, index: number) => (
-        <View key={index} style={tw`mt-3 bg-sky-200 px-4 mx-4 py-3 rounded-lg`}>
-          <View style={tw`flex flex-row items-center justify-between`}>
-            <Text style={tw`font-bold text-[16px]`}>{item.title}</Text>
-            <Text style={tw`font-bold text-white bg-sky-500 px-3 py-1 rounded`}>
-              {item.category}
-            </Text>
-          </View>
-          <View style={tw`flex flex-row mt-1 items-center justify-between`}>
-            <Text style={tw`w-3/4 text-gray-500 text-[12px] text-justify`}>
-              {item.description}
-            </Text>
+      <FlatList
+        data={lists}
+        renderItem={({ item, index }) => (
+          <View key={index} style={tw`mt-3 bg-sky-200 px-4 mx-4 py-3 rounded-lg`}>
+            {/* Render each list item here */}
+            <View style={tw`flex flex-row items-center justify-between`}>
+              <Text
+                style={[
+                  tw`font-bold text-[16px]`,
+                  !!selectedItems[item.title] && { textDecorationLine: "line-through" },
+                ]}
+              >
+                {item.title}
+              </Text>
+              <Text style={tw`font-bold text-white bg-sky-500 px-3 py-1 rounded`}>
+                {item.category}
+              </Text>
+            </View>
+            <View style={tw`flex flex-row mt-1 items-center justify-between`}>
+              <Text
+                style={[
+                  tw`w-3/4 text-gray-500 text-[12px] text-justify`,
+                  !!selectedItems[item.title] && { textDecorationLine: "line-through" },
+                ]}
+              >
+                {item.description}
+              </Text>
 
-            <View style={tw`flex flex-row items-center`}>
-              <Checkbox onChange={() => console.log("changed")} value="">
-                <CheckboxIndicator mr="$2" bgColor="white" $active-bgColor="green">
-                  <CheckboxIcon color="green" as={CheckIcon} />
-                </CheckboxIndicator>
-              </Checkbox>
-
-              <Center>
-                <Pressable
-                  onPress={() => setShowModal(true)}
-                  ref={ref}
-                  style={tw` w-6 h-6 flex items-center justify-center p-2 bg-red-500 rounded-full`}
-                >
-                  <Feather name="x-circle" size={22} color="white" />
-                </Pressable>
-
-                <ModalDelete
-                  onPress={() => handleDeleteList(item.title)}
-                  showModal={showModal}
-                  setShowModal={setShowModal}
-                  ref={ref}
+              <View style={tw`flex flex-row items-center`}>
+                <CheckBox
+                  onChange={() => handleCheckboxChange(item.title)}
+                  isChecked={!!selectedItems[item.title]}
                 />
-              </Center>
+
+                <Center>
+                  <Pressable
+                    onPress={() => setShowModal(true)}
+                    ref={ref}
+                    style={tw`flex w-6 h-6 items-center justify-center bg-red-500 rounded-full`}
+                  >
+                    <Feather
+                      name="x-circle"
+                      size={24}
+                      color="white"
+                      style={tw`w-6 h-6`}
+                    />
+                  </Pressable>
+
+                  <ModalDelete
+                    onPress={() => handleDeleteList(item.title)}
+                    showModal={showModal}
+                    setShowModal={setShowModal}
+                    ref={ref}
+                  />
+                </Center>
+              </View>
             </View>
           </View>
-        </View>
-      ))}
+        )}
+      />
       {/* list */}
     </ScrollView>
   )
