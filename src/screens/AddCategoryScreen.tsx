@@ -1,28 +1,37 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Pressable, Text, View } from "react-native"
 import Container from "../layout"
 import tw from "twrnc"
 import Input from "../components/ui/Input"
 import Button from "../components/ui/Button"
 import { Ionicons } from "@expo/vector-icons"
-import { useDispatch } from "react-redux"
-import { addCategory } from "../features/todos/todosSlice"
+import { useDispatch, useSelector } from "react-redux"
+import { createCategory, fetchCategories } from "../features/todos/todosSlice"
+import { RootState } from "../libs/Store"
 import CategoriesList from "../components/CategoriesList"
-import useFetchCategory from "../hooks/useFetchCategory"
 
 const AddCategoryScreen = ({ navigation }: { navigation: any }) => {
-  const { categoriesData } = useFetchCategory()
-  const [category, setCategory] = useState("")
   const dispatch = useDispatch()
+  const categoriesData = useSelector((state: RootState) => state.app.todos)
+  const [categoryName, setCategoryName] = useState("")
 
-  const goToHome = () => {
-    navigation.navigate("Home")
-  }
+  console.log("add category", categoriesData)
+
+  useEffect(() => {
+    dispatch(fetchCategories())
+  }, [dispatch])
 
   const handleAddCategory = () => {
-    if (category.trim() !== "") {
-      dispatch(addCategory(category))
-      setCategory("")
+    if (categoryName.trim() === "") {
+      console.error("Category name cannot be empty")
+      return
+    }
+
+    try {
+      dispatch(createCategory(categoryName))
+      setCategoryName("")
+    } catch (error) {
+      console.error("Failed to create category:", error)
     }
   }
 
@@ -31,16 +40,16 @@ const AddCategoryScreen = ({ navigation }: { navigation: any }) => {
       <View style={tw`relative`}>
         <Text style={tw`text-2xl text-center font-bold`}>Add Category</Text>
 
-        <Pressable onPress={goToHome} style={tw`absolute`}>
+        <Pressable style={tw`absolute`}>
           <Ionicons name="chevron-back-sharp" size={24} color="black" />
         </Pressable>
       </View>
 
       <View style={tw`w-full flex gap-4 my-5`}>
         <Input
-          onChange={(e) => setCategory(e)}
-          value={category}
           placeholder="Category name"
+          value={categoryName}
+          onChange={setCategoryName}
         />
         <Button label="Add Category" onPress={handleAddCategory} />
       </View>
@@ -53,5 +62,4 @@ const AddCategoryScreen = ({ navigation }: { navigation: any }) => {
     </Container>
   )
 }
-
 export default AddCategoryScreen

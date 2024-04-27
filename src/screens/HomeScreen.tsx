@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { useRef, useState } from "react"
 import { Image, Pressable, ScrollView, StatusBar, Text, View } from "react-native"
 import tw from "twrnc"
 import Input from "../components/ui/Input"
@@ -13,8 +13,6 @@ import { Feather } from "@expo/vector-icons"
 import ModalDelete from "../components/ui/DeleteModal"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import useFetchList from "../hooks/useFetchList"
-import { useDispatch } from "react-redux"
-import { removeList } from "../features/todos/todosSlice"
 
 const HomeScreen = () => {
   const [showModal, setShowModal] = useState(false)

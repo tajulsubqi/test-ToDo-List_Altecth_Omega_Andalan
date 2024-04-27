@@ -1,4 +1,4 @@
-import React from "react"
+import { useEffect } from "react"
 import { View } from "react-native"
 import {
   Select,
@@ -13,8 +13,10 @@ import {
   SelectDragIndicator,
   SelectItem,
 } from "@gluestack-ui/themed"
-import useFetchCategory from "../../hooks/useFetchCategory"
 import { ChevronDownIcon } from "@gluestack-ui/themed"
+import { useDispatch, useSelector } from "react-redux"
+import { RootState } from "../../libs/Store"
+import { fetchCategories } from "../../features/todos/todosSlice"
 
 interface Props {
   value?: string | undefined
@@ -22,7 +24,13 @@ interface Props {
 }
 
 const SelectCategory = ({ value, onChange }: Props) => {
-  const { categoriesData } = useFetchCategory()
+  const dispatch = useDispatch()
+  const categoriesData = useSelector((state: RootState) => state.app.todos)
+  console.log("select add list", categoriesData)
+
+  useEffect(() => {
+    dispatch(fetchCategories())
+  }, [dispatch])
 
   return (
     <View>
