@@ -1,18 +1,27 @@
-import { Image, Text, View } from "react-native"
+import { Image, Pressable, Text, View } from "react-native"
 import tw from "twrnc"
 import Input from "../components/ui/Input"
-import { useAppSelector } from "../libs/Store"
+import { useAppDispatch, useAppSelector } from "../libs/Store"
 import { StatusBar } from "react-native"
 import BackButtonHandler from "../components/popup/backAction"
 import ListContent from "../components/ListContent"
-import { useRef, useState } from "react"
-import Toast from "../components/popup/Toast"
+import { useEffect, useState } from "react"
+import LottieView from "lottie-react-native"
+import { useNavigation } from "@react-navigation/native"
+import Button from "../components/ui/Button"
+import { getLists } from "../features/todos/todosSlice"
 
 const HomeScreen = () => {
   const lists = useAppSelector((state) => state.app.todos)
+  const dispatch = useAppDispatch()
   const [searchInput, setSearchInput] = useState<string>("")
   console.log({ lists })
-  const toastRef = useRef<any>()
+
+  const navigation = useNavigation()
+
+  useEffect(() => {
+    dispatch(getLists())
+  }, [])
 
   BackButtonHandler()
 
@@ -37,8 +46,31 @@ const HomeScreen = () => {
       </View>
 
       {/* list */}
-      <ListContent searchInput={searchInput} toastRef={toastRef} />
-      <Toast ref={toastRef} />
+
+      {lists.length > 0 ? (
+        <ListContent searchInput={searchInput} />
+      ) : (
+        <View
+          style={tw`w-full absolute z-10 top-50 flex gap-5 items-center justify-center`}
+        >
+          <View style={tw`w-[450px] h-[350px]`}>
+            <LottieView
+              style={tw`flex-1`}
+              source={require("../../assets/animations/noData.json")}
+              autoPlay
+              loop
+            />
+          </View>
+
+          <View style={tw`w-60`}>
+            <Button
+              onPress={() => navigation.navigate("Addlist" as never)}
+              label="Add list"
+              bgColor="#535C91"
+            />
+          </View>
+        </View>
+      )}
     </View>
   )
 }

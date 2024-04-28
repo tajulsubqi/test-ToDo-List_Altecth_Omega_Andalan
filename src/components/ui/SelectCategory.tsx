@@ -50,8 +50,7 @@ const SelectCategory = ({ value, onChange, isFocused }: Props) => {
             </SelectDragIndicatorWrapper>
 
             {categoriesData.map((category) => (
-              <SelectItem
-                value={category} key={category} label={category} />
+              <SelectItem value={category} key={category} label={category} />
             ))}
           </SelectContent>
         </SelectPortal>

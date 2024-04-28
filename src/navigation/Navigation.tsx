@@ -62,11 +62,6 @@ const MainTabNavigator = () => {
         component={AddListScreen}
         options={{ headerShown: false, tabBarLabel: () => null }}
       />
-      {/* <Tab.Screen
-        name="Toast"
-        component={CustomToastScreen}
-        options={{ headerShown: false, tabBarLabel: () => null }}
-      /> */}
     </Tab.Navigator>
   )
 }

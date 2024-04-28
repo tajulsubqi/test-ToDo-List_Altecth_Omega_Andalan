@@ -35,7 +35,6 @@ export const createCategory = createAsyncThunk(
 export const deletedCategory = createAsyncThunk(
   "categories/deletedCategory",
   async (deletedCategory: string) => {
-    // Ambil kategori yang tersimpan dari AsyncStorage
     const storedCategories = await AsyncStorage.getItem("categories")
     let categories: string[] = []
 
@@ -59,27 +58,19 @@ export const createList = createAsyncThunk<
   { title: string; description: string; category: string },
   { rejectValue: string }
 >("lists/createList", async ({ title, description, category }, thunkAPI) => {
-  // Get existing data from AsyncStorage
   const existingData = await AsyncStorage.getItem("lists")
   let lists: any[] = []
-
-  // If data exists, parse it into an array
   if (existingData !== null) {
     lists = JSON.parse(existingData)
   }
 
-  // Add new data to the array
   lists.push({ title, description, category })
-
-  // Save the updated data back to AsyncStorage
   await AsyncStorage.setItem("lists", JSON.stringify(lists))
   return lists
 })
 
 export const getLists = createAsyncThunk("lists/getLists", async () => {
   const storedLists = await AsyncStorage.getItem("lists")
-  console.log("storedLists", storedLists)
-
   if (storedLists !== null) {
     return JSON.parse(storedLists)
   } else {

@@ -1,4 +1,4 @@
-import { FlatList, Pressable, Text, View } from "react-native"
+import { Button, FlatList, Pressable, Text, View } from "react-native"
 import tw from "twrnc"
 import { Center } from "@gluestack-ui/themed"
 import { Feather } from "@expo/vector-icons"
@@ -10,18 +10,14 @@ import { deleteList, getLists } from "../features/todos/todosSlice"
 import useCheckList from "../hooks/useCheckList"
 import Toast from "./popup/Toast"
 
-const ListContent = ({
-  searchInput,
-  toastRef,
-}: {
-  searchInput: string
-  toastRef: any
-}) => {
+const ListContent = ({ searchInput }: { searchInput: string }) => {
   const dispatch = useAppDispatch()
   const lists = useAppSelector((state) => state.app.todos)
   useEffect(() => {
     dispatch(getLists())
   }, [])
+
+  const toastRef = useRef<any>(null)
 
   const { selectedItems, handleCheckboxChange } = useCheckList()
   const [showModal, setShowModal] = useState(false)
@@ -43,7 +39,7 @@ const ListContent = ({
 
   return (
     <View style={tw`mb-[420px]`}>
-      <View style={tw`w-full absolute z-10 top-0`}>
+      <View style={tw`w-full absolute z-30 -top-48`}>
         <Toast ref={toastRef} />
       </View>
       <FlatList
@@ -65,6 +61,7 @@ const ListContent = ({
                 >
                   {item.title}
                 </Text>
+
                 <Text style={tw`font-bold text-white bg-[#4F709C] px-3 py-1 rounded-lg`}>
                   {item.category}
                 </Text>
