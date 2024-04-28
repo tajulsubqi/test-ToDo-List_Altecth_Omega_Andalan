@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react"
-import { FlatList, Image, Pressable, ScrollView, Text, View } from "react-native"
+import { FlatList, Image, Pressable, Text, View } from "react-native"
 import tw from "twrnc"
 import Input from "../components/ui/Input"
 import { Center } from "@gluestack-ui/themed"
@@ -10,27 +10,34 @@ import { deleteList, getLists } from "../features/todos/todosSlice"
 import { useAppDispatch, useAppSelector } from "../libs/Store"
 import useCheckList from "../hooks/useCheckList"
 import { StatusBar } from "react-native"
+import BackButtonHandler from "../components/popup/backAction"
+import { ToastDeleteList } from "../components/popup/Toast"
+import useSearchList from "../hooks/useSearchList"
 
 const HomeScreen = () => {
   const lists = useAppSelector((state) => state.app.todos)
-  const { selectedItems, handleCheckboxChange } = useCheckList()
   const dispatch = useAppDispatch()
+
+  const { selectedItems, handleCheckboxChange } = useCheckList()
+  const { handleSearch, searchText, searchResults } = useSearchList()
   const [showModal, setShowModal] = useState(false)
-  const ref = useRef(null)
+  const modalRef = useRef(null)
 
   useEffect(() => {
     dispatch(getLists())
   }, [])
 
-  console.log({ lists })
+  // console.log({ lists })
 
   const handleDeleteList = async (title: string) => {
     await dispatch(deleteList(title))
     setShowModal(false)
+    ToastDeleteList()
   }
+  BackButtonHandler()
 
   return (
-    <ScrollView style={tw`bg-[#EEEEEE]`}>
+    <View style={tw`bg-[#EEEEEE]`}>
       <StatusBar backgroundColor={"#4F709C"} />
       <View style={tw`w-full bg-[#4F709C] shadow-md rounded-b-[40px] mb-5 px-4 py-4`}>
         <View style={tw`flex flex-row items-center justify-between`}>
@@ -45,17 +52,22 @@ const HomeScreen = () => {
         </View>
 
         <View style={tw`w-full mt-5 mb-5`}>
-          <Input icon placeholder="Search List ......" />
+          <Input
+            icon
+            placeholder="Search List ......"
+            onChange={handleSearch}
+            value={searchText}
+          />
+
           {/* <Dropdown /> */}
         </View>
       </View>
 
       {/* list */}
       <FlatList
-        data={lists}
+        data={searchText ? searchResults : lists}
         renderItem={({ item, index }) => (
           <View key={index} style={tw`mt-3 bg-[#B5C0D0] px-4 mx-4 py-3 rounded-lg`}>
-            {/* Render each list item here */}
             <View style={tw`flex flex-row items-center justify-between`}>
               <Text
                 style={[
@@ -88,7 +100,7 @@ const HomeScreen = () => {
                 <Center>
                   <Pressable
                     onPress={() => setShowModal(true)}
-                    ref={ref}
+                    ref={modalRef}
                     style={tw`flex w-6 h-6 items-center justify-center bg-red-500 rounded-full`}
                   >
                     <Feather
@@ -103,7 +115,6 @@ const HomeScreen = () => {
                     onPress={() => handleDeleteList(item.title)}
                     showModal={showModal}
                     setShowModal={setShowModal}
-                    ref={ref}
                   />
                 </Center>
               </View>
@@ -112,7 +123,7 @@ const HomeScreen = () => {
         )}
       />
       {/* list */}
-    </ScrollView>
+    </View>
   )
 }
 

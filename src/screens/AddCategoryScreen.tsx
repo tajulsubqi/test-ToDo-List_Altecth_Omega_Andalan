@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { Pressable, Text, View } from "react-native"
+import { Alert, Pressable, Text, View } from "react-native"
 import Container from "../layout"
 import tw from "twrnc"
 import Input from "../components/ui/Input"
@@ -9,21 +9,23 @@ import { createCategory, fetchCategories } from "../features/todos/todosSlice"
 import { useAppDispatch, useAppSelector } from "../libs/Store"
 import CategoriesList from "../components/CategoriesList"
 import { useNavigation } from "@react-navigation/native"
+import { ToastAddCategorySuccess } from "../components/popup/Toast"
 
 const AddCategoryScreen = () => {
   const dispatch = useAppDispatch()
   const categoriesData = useAppSelector((state) => state.app.categories)
-  const [categoryName, setCategoryName] = useState<string | undefined>("")
+  const [categoryName, setCategoryName] = useState<string>("")
   const navigation = useNavigation()
 
   const handleAddCategory = () => {
     if (categoryName.trim() === "") {
-      console.error("Category name cannot be empty")
+      Alert.alert("Category name cannot be empty")
       return
     }
 
     dispatch(createCategory(categoryName))
     setCategoryName("")
+    ToastAddCategorySuccess()
   }
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-import { Pressable, Text, View } from "react-native"
+import { Pressable, Text, ToastAndroid, View } from "react-native"
 import Container from "../layout"
 import tw from "twrnc"
 import Input from "../components/ui/Input"
@@ -7,7 +7,7 @@ import Button from "../components/ui/Button"
 import { Ionicons } from "@expo/vector-icons"
 import SelectCategory from "../components/ui/SelectCategory"
 import { createList } from "../features/todos/todosSlice"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useNavigation } from "@react-navigation/native"
 import { useAppDispatch } from "../libs/Store"
 import { Todo } from "../interface"
@@ -23,7 +23,8 @@ const AddListScreen = () => {
 
   const handleAddList = () => {
     if (!title.trim() || !description.trim() || !category.trim()) {
-      setError("Please fill in all fields")
+      console.log("Please fill in all fields")
+      ToastAndroid.show("Please fill in all fields", ToastAndroid.SHORT)
       return
     }
 
@@ -32,9 +33,11 @@ const AddListScreen = () => {
       setTitle("")
       setDescription("")
       setCategory("")
+      ToastAndroid.show("List created successfully", ToastAndroid.SHORT)
 
       navigation.navigate("Home" as never)
     } catch (error) {
+      ToastAndroid.show("Something went wrong", ToastAndroid.SHORT)
       console.log(error)
     }
   }
@@ -55,6 +58,7 @@ const AddListScreen = () => {
           isFocused={navigation.isFocused()}
         />
         <TextArea value={description} onChange={(text) => setDescription(text)} />
+
         <Button label="Add List" bgColor="#535C91" onPress={handleAddList} />
       </View>
     </Container>

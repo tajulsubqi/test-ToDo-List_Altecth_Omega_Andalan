@@ -9,14 +9,19 @@ import {
 import { Text } from "react-native"
 import tw from "twrnc"
 
-const DeleteModal = ({ showModal, setShowModal, ref, onPress }: any) => {
+interface DeleteModalProps {
+  showModal: boolean
+  setShowModal: (value: boolean) => void
+  onPress: () => void
+}
+
+const DeleteModal = ({ showModal, setShowModal, onPress }: DeleteModalProps) => {
   return (
     <Modal
       isOpen={showModal}
       onClose={() => {
         setShowModal(false)
       }}
-      finalFocusRef={ref}
     >
       <ModalBackdrop />
       <ModalContent>

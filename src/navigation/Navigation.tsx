@@ -6,7 +6,6 @@ import AddListScreen from "../screens/AddListScreen"
 import AddCategoryScreen from "../screens/AddCategoryScreen"
 import OnboardingScreen from "../screens/OnboardingScreen"
 import { createStackNavigator } from "@react-navigation/stack"
-import tw from "twrnc"
 
 const Tab = createBottomTabNavigator()
 const Stack = createStackNavigator()
@@ -16,7 +15,14 @@ const MainTabNavigator = () => {
     <Tab.Navigator
       initialRouteName="Home"
       screenOptions={({ route }) => ({
-        tabBarStyle: { backgroundColor: "#4F709C", borderRadius: 0, borderTopLeftRadius: 30, paddingHorizontal: 10, height: 60, borderTopRightRadius: 30 },
+        tabBarStyle: {
+          backgroundColor: "#4F709C",
+          borderRadius: 0,
+          borderTopLeftRadius: 30,
+          paddingHorizontal: 10,
+          height: 60,
+          borderTopRightRadius: 30,
+        },
         tabBarIcon: ({ focused, color }) => {
           let iconName
           let IconComponent
@@ -45,6 +51,7 @@ const MainTabNavigator = () => {
         component={HomeScreen}
         options={{ headerShown: false, tabBarLabel: () => null }}
       />
+
       <Tab.Screen
         name="AddCategory"
         component={AddCategoryScreen}
@@ -62,7 +69,7 @@ const MainTabNavigator = () => {
 const Navigation = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Onboarding">
+      <Stack.Navigator initialRouteName="Oboarding">
         <Stack.Screen
           name="Onboarding"
           component={OnboardingScreen}

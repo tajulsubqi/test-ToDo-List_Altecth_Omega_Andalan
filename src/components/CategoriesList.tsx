@@ -1,10 +1,11 @@
 import React from "react"
 import { Pressable, Text } from "react-native"
-import { View } from "react-native"
 import tw from "twrnc"
+import { View } from "react-native"
 import { useAppDispatch } from "../libs/Store"
 import { deletedCategory } from "../features/todos/todosSlice"
 import { Feather } from "@expo/vector-icons"
+import { ToastDeleteCategory } from "./popup/Toast"
 
 interface Props {
   categoriesData: string[]
@@ -14,8 +15,8 @@ const CategoriesList = ({ categoriesData }: Props) => {
   const dispatch = useAppDispatch()
 
   const handleDeleteCategory = (deleteCategory: string) => {
-    // Panggil action creator deletedCategory dengan nama kategori yang akan dihapus
     dispatch(deletedCategory(deleteCategory))
+    ToastDeleteCategory()
   }
 
   return (
