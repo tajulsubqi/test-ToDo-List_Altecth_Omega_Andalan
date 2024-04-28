@@ -1,11 +1,11 @@
-import React from "react"
+import React, { useRef } from "react"
 import { Pressable, Text } from "react-native"
 import tw from "twrnc"
 import { View } from "react-native"
 import { useAppDispatch } from "../libs/Store"
 import { deletedCategory } from "../features/todos/todosSlice"
 import { Feather } from "@expo/vector-icons"
-import { ToastDeleteCategory } from "./popup/Toast"
+import Toast from "./popup/Toast"
 
 interface Props {
   categoriesData: string[]
@@ -14,13 +14,22 @@ interface Props {
 const CategoriesList = ({ categoriesData }: Props) => {
   const dispatch = useAppDispatch()
 
+  const toastRef = useRef<any>()
+
   const handleDeleteCategory = (deleteCategory: string) => {
     dispatch(deletedCategory(deleteCategory))
-    ToastDeleteCategory()
+    toastRef.current.show({
+      type: "success",
+      text: "Successfully deleted category!",
+      duration: 2000,
+    })
   }
 
   return (
     <View style={tw`mt-3 flex flex-row gap-2 flex-wrap py-3 rounded-lg`}>
+      <View style={tw`w-full py-3 absolute z-200 -top-70`}>
+        <Toast ref={toastRef} />
+      </View>
       {categoriesData.map((data, index) => (
         <View key={index} style={tw`relative`}>
           <Text

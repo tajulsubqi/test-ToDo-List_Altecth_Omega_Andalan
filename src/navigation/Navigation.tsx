@@ -62,6 +62,11 @@ const MainTabNavigator = () => {
         component={AddListScreen}
         options={{ headerShown: false, tabBarLabel: () => null }}
       />
+      {/* <Tab.Screen
+        name="Toast"
+        component={CustomToastScreen}
+        options={{ headerShown: false, tabBarLabel: () => null }}
+      /> */}
     </Tab.Navigator>
   )
 }
@@ -69,7 +74,7 @@ const MainTabNavigator = () => {
 const Navigation = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Oboarding">
+      <Stack.Navigator initialRouteName="Onboarding">
         <Stack.Screen
           name="Onboarding"
           component={OnboardingScreen}

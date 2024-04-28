@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react"
-import { Alert, Pressable, Text, View } from "react-native"
+import React, { useEffect, useRef, useState } from "react"
+import { Pressable, Text, View } from "react-native"
 import Container from "../layout"
 import tw from "twrnc"
 import Input from "../components/ui/Input"
@@ -9,7 +9,7 @@ import { createCategory, fetchCategories } from "../features/todos/todosSlice"
 import { useAppDispatch, useAppSelector } from "../libs/Store"
 import CategoriesList from "../components/CategoriesList"
 import { useNavigation } from "@react-navigation/native"
-import { ToastAddCategorySuccess } from "../components/popup/Toast"
+import Toast from "../components/popup/Toast"
 
 const AddCategoryScreen = () => {
   const dispatch = useAppDispatch()
@@ -17,15 +17,26 @@ const AddCategoryScreen = () => {
   const [categoryName, setCategoryName] = useState<string>("")
   const navigation = useNavigation()
 
+  const toastRef = useRef<any>()
+
   const handleAddCategory = () => {
-    if (categoryName.trim() === "") {
-      Alert.alert("Category name cannot be empty")
+    if (typeof categoryName !== "string" || categoryName.trim() === "") {
+      toastRef.current?.show({
+        type: "error",
+        text: "Category name cannot be empty",
+        duration: 2000,
+      })
       return
     }
 
     dispatch(createCategory(categoryName))
+
     setCategoryName("")
-    ToastAddCategorySuccess()
+    toastRef.current?.show({
+      type: "success",
+      text: "Successfully added category!",
+      duration: 2000,
+    })
   }
 
   useEffect(() => {
@@ -34,6 +45,7 @@ const AddCategoryScreen = () => {
 
   return (
     <Container>
+      <Toast ref={toastRef} />
       <View style={tw`relative`}>
         <Text style={tw`text-2xl text-center font-bold text-[#4F709C]`}>
           Add Category

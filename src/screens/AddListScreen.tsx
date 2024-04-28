@@ -7,10 +7,11 @@ import Button from "../components/ui/Button"
 import { Ionicons } from "@expo/vector-icons"
 import SelectCategory from "../components/ui/SelectCategory"
 import { createList } from "../features/todos/todosSlice"
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { useNavigation } from "@react-navigation/native"
 import { useAppDispatch } from "../libs/Store"
 import { Todo } from "../interface"
+import Toast from "../components/popup/Toast"
 
 const AddListScreen = () => {
   const navigation = useNavigation()
@@ -20,30 +21,36 @@ const AddListScreen = () => {
   const [category, setCategory] = useState("")
 
   const dispatch = useAppDispatch()
+  const toastRef = useRef<any>()
 
   const handleAddList = () => {
     if (!title.trim() || !description.trim() || !category.trim()) {
       console.log("Please fill in all fields")
-      ToastAndroid.show("Please fill in all fields", ToastAndroid.SHORT)
+      toastRef.current?.show({
+        type: "error",
+        text: "Please fill in all fields",
+        duration: 2000,
+      })
       return
     }
 
-    try {
-      dispatch(createList({ title, description, category } as Todo))
-      setTitle("")
-      setDescription("")
-      setCategory("")
-      ToastAndroid.show("List created successfully", ToastAndroid.SHORT)
+    dispatch(createList({ title, description, category } as Todo))
+    setTitle("")
+    setDescription("")
+    setCategory("")
+    toastRef.current?.show({
+      type: "success",
+      text: "Successfully added list!",
+      duration: 2000,
+    })
 
-      navigation.navigate("Home" as never)
-    } catch (error) {
-      ToastAndroid.show("Something went wrong", ToastAndroid.SHORT)
-      console.log(error)
-    }
+    navigation.navigate("Home" as never)
   }
 
   return (
     <Container>
+      <Toast ref={toastRef} />
+
       <View style={tw`relative`}>
         <Text style={tw`text-2xl text-center font-bold text-[#4F709C]`}>Add List</Text>
         <Pressable onPress={() => navigation.goBack()} style={tw`absolute`}>
